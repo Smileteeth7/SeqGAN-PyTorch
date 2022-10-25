@@ -19,6 +19,8 @@ from discriminator import Discriminator
 from target_lstm import TargetLSTM
 from rollout import Rollout
 from data_iter import GenDataIter, DisDataIter
+
+f=open(r'./result.txt','w')
 # ================== Parameter Definition =================
 
 parser = argparse.ArgumentParser(description='Training Parameter')
@@ -162,10 +164,12 @@ def main():
     for epoch in range(PRE_EPOCH_NUM):
         loss = train_epoch(generator, gen_data_iter, gen_criterion, gen_optimizer)
         print('Epoch [%d] Model Loss: %f'% (epoch, loss))
+        print('Epoch [%d] Model Loss: %f' % (epoch, loss),file=f)
         generate_samples(generator, BATCH_SIZE, GENERATED_NUM, EVAL_FILE)
         eval_iter = GenDataIter(EVAL_FILE, BATCH_SIZE)
         loss = eval_epoch(target_lstm, eval_iter, gen_criterion)
         print('Epoch [%d] True Loss: %f' % (epoch, loss))
+        print('Epoch [%d] True Loss: %f' % (epoch, loss),file=f)
 
     # Pretrain Discriminator
     dis_criterion = nn.NLLLoss(reduction='sum')
@@ -179,6 +183,7 @@ def main():
         for _ in range(3):
             loss = train_epoch(discriminator, dis_data_iter, dis_criterion, dis_optimizer)
             print('Epoch [%d], loss: %f' % (epoch, loss))
+            print('Epoch [%d], loss: %f' % (epoch, loss),file=f)
     # Adversarial Training
     rollout = Rollout(generator, 0.8)
     print('#####################################################')
@@ -221,6 +226,7 @@ def main():
             eval_iter = GenDataIter(EVAL_FILE, BATCH_SIZE)
             loss = eval_epoch(target_lstm, eval_iter, gen_criterion)
             print('Batch [%d] True Loss: %f' % (total_batch, loss))
+            print('Batch [%d] True Loss: %f' % (total_batch, loss),file=f)
         rollout.update_params()
 
         for _ in range(4):
