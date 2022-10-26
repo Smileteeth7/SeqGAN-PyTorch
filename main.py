@@ -45,7 +45,7 @@ if opt.cuda is not None and opt.cuda >= 0:
 
 # Genrator Parameters
 g_emb_dim = 32
-g_hidden_dim = 48
+g_hidden_dim = 32
 g_sequence_len = 20
 
 # Discriminator Parameters
